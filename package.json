@@ -1,0 +1,9 @@
+{
+  "name": "desigmon-rom-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional browser checks for the static ROM patch workbench",
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
