@@ -23,6 +23,9 @@ class RomTests(unittest.TestCase):
     def test_encoding_uses_decimal_table_ten(self):
         self.assertEqual(lab.encode_name('타이포몬').hex(),'0988079c0a2704935050')
         self.assertEqual(lab.encode_name('일러몬').hex(),'079f03df049350505050')
+        self.assertEqual(lab.encode_name('타이포몽').hex(),'0988079c0a2704995050')
+        self.assertEqual(lab.encode_name('컬러링').hex(),'092303df044550505050')
+        self.assertEqual(lab.encode_name('픽셀러').hex(),'0a6805ef03df50505050')
 
     def test_invalid_names(self):
         for name in ['', 'abcdef', '디자인몬', '일'*6]:
@@ -45,7 +48,7 @@ class RomTests(unittest.TestCase):
             allowed.update(range(i,i+10))
         self.assertTrue(all(a==b or i in allowed for i,(a,b) in enumerate(zip(original,out))))
         self.assertEqual(lab.apply_ips(original,lab.make_ips(original,out)),out)
-        self.assertEqual(manifest['changed_bytes'],23)
+        self.assertEqual(manifest['changed_bytes'],21)
         self.assertTrue(lab.inspect(out)['global_checksum_valid'])
 
     def test_expected_bytes_guard(self):

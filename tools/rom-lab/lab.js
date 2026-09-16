@@ -1,9 +1,9 @@
 'use strict';
 const BASE='9c273e86e6120c6a038160ccb0153b8b20425b84fc08a496281c1d1bcac492f6';
-const chars={일:'079f',러:'03df',몬:'0493',코:'093a',딩:'0369',타:'0988',이:'079c',포:'0a27'};
-const starters=[{id:152,old:'치코리타',name:'일러몬',offset:0x1b1230,expected:'0901093a043e09885050',icon:'✳'},
-{id:155,old:'브케인',name:'코딩몬',offset:0x1b124e,expected:'054a0929079e50505050',icon:'⌘'},
-{id:158,old:'리아코',name:'타이포몬',offset:0x1b126c,expected:'043e06c6093a50505050',icon:'T'}];
+const chars={일:'079f',러:'03df',몬:'0493',코:'093a',딩:'0369',타:'0988',이:'079c',포:'0a27',몽:'0499',컬:'0923',링:'0445',픽:'0a68',셀:'05ef'};
+const starters=[{id:152,old:'치코리타',name:'타이포몽',offset:0x1b1230,expected:'0901093a043e09885050',icon:'✳'},
+{id:155,old:'브케인',name:'컬러링',offset:0x1b124e,expected:'054a0929079e50505050',icon:'⌘'},
+{id:158,old:'리아코',name:'픽셀러',offset:0x1b126c,expected:'043e06c6093a50505050',icon:'T'}];
 const $=id=>document.getElementById(id),hex=b=>Array.from(b,n=>n.toString(16).padStart(2,'0')).join('');
 let original=null,product=null,loadGeneration=0,editGeneration=0;
 const sha=async b=>hex(new Uint8Array(await crypto.subtle.digest('SHA-256',b)));
