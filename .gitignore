@@ -1,0 +1,12 @@
+*.gb
+*.gbc
+*.sav
+*.state
+*.ram
+*.rtc
+*.bin
+*.zip
+__pycache__/
+.venv/
+node_modules/
+local-output/
