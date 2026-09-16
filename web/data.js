@@ -52,6 +52,8 @@
   const town=makeMap('town',32,24,'.');town.name='시작의 마을';town.subtitle='작은 작업들이 모이는 곳';
   road(town,1,11,30,3);road(town,8,8,3,14);road(town,23,8,3,14);road(town,8,19,18,3);
   town.buildings=[{x:5,y:3,w:8,h:7,door:[9,9],name:'시작 스튜디오',color:'#d88d70'}, {x:20,y:3,w:8,h:7,door:[24,9],name:'쉼표 라운지',color:'#90b5a6'}, {x:20,y:15,w:8,h:6,door:[24,20],name:'클라이언트 공방',color:'#b8a2c7'}, {x:4,y:15,w:7,h:5,door:[8,19],name:'도구 상점',color:'#c6b879'}];
+  // Compact six-by-four tile houses fit the 160px handheld viewport.
+  for(const b of town.buildings){b.w=6;b.h=4;b.x=b.door[0]-3;b.y=b.door[1]-3;}
   town.npcs=[{id:'rest',name:'쉼표',x:23,y:11,look:1},{id:'shop',name:'도구지기',x:9,y:20,look:2},{id:'guide',name:'선배 디자이너',x:15,y:12,look:3}];
   town.portals=[{x:9,y:9,to:'studio',tx:10,ty:12},{x:24,y:20,to:'guild',tx:10,ty:12},{x:30,y:12,to:'field',tx:2,ty:12}];
   for(const [x,y] of [[2,5],[2,7],[16,4],[16,5],[16,7],[29,16],[29,18],[13,20],[15,20],[17,20]])town.tiles[y][x]='t';
