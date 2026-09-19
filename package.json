@@ -1,0 +1,13 @@
+{
+  "name": "designmon-adventure",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Static Designmon RPG, Korean Gold ROM research and local browser player",
+  "devDependencies": {
+    "playwright": "1.63.0"
+  },
+  "scripts": {
+    "test": "node --test tests/web-core.cjs",
+    "test:browser": "node tests/web-browser.cjs"
+  }
+}
