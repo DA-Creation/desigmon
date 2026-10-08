@@ -1,0 +1,8 @@
+{
+  "source": "https://github.com/LIJI32/SameBoy",
+  "commit": "c458e7c5d2d350fb37a1931c40da9f758d28d240",
+  "emscripten": "4.0.15",
+  "model": "CGB-E",
+  "sha256": "ba917003b66d64a66ed6f58a80f50475359d0fb080886d23e69dbf0ea75704ab",
+  "boot_sha256": "f767b8e7e510a255f81328c89dba6e0c996b370e1bc86aebb8584a7da47a5bba"
+}

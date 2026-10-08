@@ -1,13 +1,17 @@
 {
   "name": "designmon-adventure",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Static Designmon RPG, Korean Gold ROM research and local browser player",
+  "description": "Offline Korean Gold runtime, complete ROM preservation and editable WASM source builds",
   "devDependencies": {
+    "fake-indexeddb": "6.2.5",
+    "happy-dom": "20.14.5",
     "playwright": "1.63.0"
   },
   "scripts": {
-    "test": "node --test tests/web-core.cjs",
-    "test:browser": "node tests/web-browser.cjs"
+    "test": "node --test tests/web-core.cjs tests/gold-*.cjs",
+    "test:browser": "node tests/web-browser.cjs",
+    "test:gold": "node --test tests/gold-*.cjs",
+    "build": "python3 tools/build-standalone.py"
   }
 }
