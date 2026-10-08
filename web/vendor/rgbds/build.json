@@ -1,0 +1,29 @@
+{
+  "source": "https://github.com/gbdev/rgbds",
+  "commit": "307846b03ea89ee57bf75f179d5f8051175ac60d",
+  "rgbds_version": "1.0.3",
+  "license": "MIT",
+  "factories": {
+    "rgbasm": {
+      "global": "RGBASM",
+      "bytes": 647223,
+      "sha256": "e64a99355419942a973cfa3124ac0446681f154ba3dd42a8fdcacbf7a85cf9f5"
+    },
+    "rgblink": {
+      "global": "RGBLINK",
+      "bytes": 466985,
+      "sha256": "98985da43368298375e7d2d9a4e4d26042ebd4984e330a2577965fa9f8121215"
+    },
+    "rgbfix": {
+      "global": "RGBFIX",
+      "bytes": 298161,
+      "sha256": "b4839ca9b52fba1a1f6de113dcd04e92e780fd658ddcce66a160b77b03cdd756"
+    },
+    "rgbgfx": {
+      "global": "RGBGFX",
+      "bytes": 620858,
+      "sha256": "361e93de01c4ea6eb49a9692f0e716f321cb9776dc2f195b9d9b5303737c30a1"
+    }
+  },
+  "emscripten_version": "4.0.15"
+}
