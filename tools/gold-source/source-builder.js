@@ -43,6 +43,34 @@
     }
     return project;
   }
+  function romSections(map) {
+    const sections = [];
+    let bank = null, region = '';
+    for (const line of new TextDecoder().decode(map).split(/\r?\n/)) {
+      const heading = /^([A-Z0-9]+) bank #(\d+):$/.exec(line);
+      if (heading) {region = heading[1]; bank = Number(heading[2]); continue;}
+      if (!['ROM0', 'ROMX'].includes(region)) continue;
+      const section = /^\s*SECTION: \$([0-9a-f]+)(?:-\$[0-9a-f]+)? \(\$([0-9a-f]+) bytes?\) \["(.*)"\]$/i.exec(line);
+      if (!section) continue;
+      const address = parseInt(section[1], 16), length = parseInt(section[2], 16);
+      if (length) sections.push({name: section[3], offset: bank * 0x4000 + address - (region === 'ROMX' ? 0x4000 : 0), length});
+    }
+    if (!sections.length) throw Error('ROM section map is missing');
+    return sections;
+  }
+  function assertOpaquePreserved(backdrop, backdropMap, resultMap) {
+    const occupied = romSections(backdropMap).filter(section => {
+      if (section.offset < 0 || section.offset + section.length > backdrop.length) throw Error('Invalid opaque ROM section range');
+      // A nonzero opaque section can contain meaningful zero bytes too. Protect
+      // its entire allocation rather than merely its individual nonzero bytes.
+      return backdrop.subarray(section.offset, section.offset + section.length).some(value => value !== 0);
+    });
+    for (const current of romSections(resultMap)) {
+      const conflict = occupied.find(section => current.offset < section.offset + section.length && section.offset < current.offset + current.length);
+      if (conflict) throw Error('Source section "' + current.name + '" overlaps preserved opaque data at ROM 0x' +
+        Math.max(current.offset, conflict.offset).toString(16) + '. Relocate the source or explicitly update the allocation in opaque.asm.');
+    }
+  }
   async function compile(project, options = {}) {
     validate(project);
     const factories = options.factories || {rgbasm: root.RGBASM, rgblink: root.RGBLINK, rgbfix: root.RGBFIX, rgbgfx: root.RGBGFX,
@@ -109,9 +137,10 @@
     // The backdrop is rebuilt from the editable opaque ASM, never copied from a
     // bundled ROM. Keeping it separate lets resized graphics consume padding,
     // matching the pinned upstream's overlay placement behavior.
-    await invoke('rgblink', ['-o', 'backdrop.gbc', 'opaque.o'], ['backdrop.gbc']);
+    await invoke('rgblink', ['-m', 'backdrop.map', '-o', 'backdrop.gbc', 'opaque.o'], ['backdrop.gbc', 'backdrop.map']);
     await invoke('rgblink', ['-l', 'layout.link', '-n', 'result.sym', '-m', 'result.map', '-O', 'backdrop.gbc', '-o', 'result.gbc', ...objects],
       ['result.gbc', 'result.sym', 'result.map']);
+    assertOpaquePreserved(files.get('backdrop.gbc'), files.get('backdrop.map'), files.get('result.map'));
     await invoke('rgbfix', ['-Cjv', '-k', '01', '-l', '0x33', '-m', 'MBC3+TIMER+RAM+BATTERY', '-r', '3', '-p', '0',
       '-t', 'POKEMON_GLD', '-i', 'AAUK', 'result.gbc'], ['result.gbc']);
     const rom = files.get('result.gbc');

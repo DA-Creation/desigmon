@@ -84,6 +84,8 @@ node tools/gold-source/test_source_build.cjs "$PRIVATE_WORK/gold-source-project.
 
 전체 16개 ASM 번역 단위와 opaque ASM도 WASM으로 조립한다. 웹 빌드에서는 크기가 바뀐 그래픽이 패딩을 사용할 수 있도록 opaque ASM을 먼저 `backdrop.gbc`로 링크하고 그 **소스에서 생성한 배경 바이트** 위에 정식 소스를 링크한다. 입력 원본 ROM을 그대로 복사해 완성본이라고 표시하는 방식이 아니다. 위의 네이티브 `explicit` 명령은 `-O` 없이 같은 결과를 만들 수 있는 별도 검증 경로다. 은폐된 의미의 해석률은 이 절차로 달라지지 않는다.
 
+웹 링커의 overlay 옵션 자체는 배경 영역과의 충돌을 막지 않는다. 따라서 두 링커 맵을 추가 대조해, 0이 아닌 바이트가 있는 opaque 섹션의 **전체 할당 영역**을 정식 소스가 침범하면 빌드를 거부한다. 그 섹션 내부의 0바이트도 함께 보호한다. 전부 0인 opaque 섹션은 확장용 패딩으로 사용할 수 있으며, 원시 영역을 해석된 소스로 바꾸려면 `opaque.asm`의 해당 할당도 명시적으로 옮기거나 줄여야 한다. 이 검사는 주소·포인터의 의미까지 증명하지 않으므로 크기 변경 후 실행 검증은 여전히 필요하다. `tests/gold-source-overlap.cjs`는 게임 데이터가 없는 합성 ASM으로 침범 거부·패딩 사용·명시적 할당 이동을 실제 WASM 링커에서 검사한다.
+
 UI 연결 API는 `web/gold/source-build.js`의 `DesignmonSourceProject`다. Node에서도 같은 클래스를 `require`할 수 있다.
 
 ```js

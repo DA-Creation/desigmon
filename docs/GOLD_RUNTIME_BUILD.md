@@ -15,7 +15,7 @@ python3 tools/gold-runtime/build.py \
 python3 tools/build-standalone.py
 ```
 
-`--python`에는 Emscripten이 지원하는 Python 버전을 지정한다(확인 환경 Python 3.11). 빌드는 고정 소스 커밋을 확인하며 코어와 부트 ROM을 단일 JavaScript 파일에 포함한다. WebAssembly를 실행할 때 `.wasm`을 네트워크로 가져올 필요가 없다. 루트 HTML은 CSS, 라이브러리, 라이선스를 모두 포함한다.
+`--python`에는 Emscripten이 지원하는 Python 버전을 지정한다(확인 환경 Python 3.12.14). 빌드는 고정 소스 커밋을 확인하며 코어와 부트 ROM을 단일 JavaScript 파일에 포함한다. WebAssembly를 실행할 때 `.wasm`을 네트워크로 가져올 필요가 없다. 루트 HTML은 CSS, 라이브러리, 라이선스를 모두 포함한다.
 
 API:
 

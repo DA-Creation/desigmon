@@ -31,6 +31,19 @@ test('normal and double-speed CPUs exchange serial bytes on the same 8MHz timeli
  for(const master of[r,p])for(const speed of[0x81,0x83])for(const value of[0,1,0x55,0x80,0xaa,0xff]){const slave=master===r?p:r;arm(slave,value^0xff,0x80);ready(r,slave);arm(master,value,speed);r.frame();checkTransfer(master,slave,value,value^0xff);assert.ok(Math.abs(r.ticks-p.ticks)<=128);}
  }finally{r.closeAll();}
 });
+test('connected boot tolerates the zero-tick STOP speed-switch transition',async()=>{
+ const r=await Runtime.create(),p=r.device(1);try{for(const d of[r,p]){const {rom,boot}=cartridge(d===p);d.boot=boot;d.open(rom,{deterministic:true});}r.connect('link');
+ for(let i=0;i<4;i++)r.frame();assert.equal(r.read(0xff4d)&0x80,0);assert.equal(p.read(0xff4d)&0x80,0x80);assert.ok(Math.abs(r.ticks-p.ticks)<=128);
+ arm(p,0x96,0x80);ready(r,p);arm(r,0x69,0x81);r.frame();checkTransfer(r,p,0x69,0x96);
+ }finally{r.closeAll();}
+});
+test('original Gold boots with both consoles already linked for 1200 frames',{skip:!process.env.GOLD_ROM},async()=>{
+ const fs=require('node:fs'),rom=fs.readFileSync(process.env.GOLD_ROM),r=await Runtime.create(),p=r.device(1);try{
+ for(const d of[r,p]){d.open(rom,{deterministic:true});if(process.env.GOLD_LINK_SAVE)d.loadBattery(fs.readFileSync(process.env.GOLD_LINK_SAVE));}r.connect('link');let changed=0;
+ for(let i=0;i<1200;i++){if(i===900)r.key('start',true);if(i===910)r.release();if(i===940)p.key('start',true);if(i===950)p.release();const f=r.frame();assert.equal(f.pixels.length,92160);assert.equal(f.peer.pixels.length,92160);assert.ok(Math.abs(r.ticks-p.ticks)<=128);if(f.audio.some(v=>v))changed++;}
+ assert.equal(r.frameNumber,1200);assert.equal(p.frameNumber,1200);assert.ok(changed>500);assert.ok(new Set(new Uint32Array(r.pixels().buffer)).size>2);assert.ok(new Set(new Uint32Array(p.pixels().buffer)).size>2);
+ }finally{r.closeAll();}
+});
 test('paired state resumes a partial byte, pixels and audio; damaged pair leaves both unchanged',async()=>{
  const [r,p]=await pair();try{initializeScreen(r,0x1f,0);initializeScreen(p,0,0x7c);tone(r);tone(p);r.connect('both');arm(p,0x35,0x80);ready(r,p);arm(r,0xa7,0x81);r.runLinkedTicks(2400);
  assert.equal(r.read(0xff02)&0x80,0x80);assert.equal(p.read(0xff02)&0x80,0x80);

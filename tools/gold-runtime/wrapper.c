@@ -53,7 +53,15 @@ int gold_pair_ticks(unsigned duration){
  if(!devices[0].gb||!devices[1].gb||!connection)return -1;
  if(duration>FRAME_TICKS||pair_target>UINT64_MAX-FRAME_TICKS-128)return -2;
  devices[0].sample_count=devices[1].sample_count=0;pair_target+=duration;
- while(ticks[0]<pair_target||ticks[1]<pair_target){int i=ticks[0]<=ticks[1]?0:1;unsigned elapsed=GB_run(devices[i].gb);if(!elapsed)return -2;ticks[i]+=elapsed;}
+ unsigned zero_steps=0;
+ while(ticks[0]<pair_target||ticks[1]<pair_target){
+  int i=ticks[0]<=ticks[1]?0:1;unsigned elapsed=GB_run(devices[i].gb);
+  /* STOP speed switching can consume speed_switch_freeze without advancing
+   * the normalized clock. GB_run_frame likewise continues through this step.
+   * Retry the same least-advanced core; never invent elapsed cable time. */
+  if(!elapsed){if(++zero_steps>1024)return -3;continue;}
+  zero_steps=0;ticks[i]+=elapsed;
+ }
  return devices[0].sample_count;
 }
 int gold_pair_frame(void){int n=gold_pair_ticks(FRAME_TICKS);if(n>=0){devices[0].frame_count++;devices[1].frame_count++;}return n;}
